@@ -4,6 +4,7 @@ namespace FormulaABD.DTOs.Risultato
 {
     public class RisultatoDto
     {
+        public Guid Id { get; set; }
         public string TracciatoName { get; set; }
         public string PilotaName { get; set; }
         public string TempoGiro { get; set; }

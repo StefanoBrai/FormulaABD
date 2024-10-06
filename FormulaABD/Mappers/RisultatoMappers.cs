@@ -9,6 +9,7 @@ namespace FormulaABD.Mappers
         {
             return new RisultatoDto
             {
+                Id = risultato.Id,
                 TracciatoName = risultato.Tracciato.Name,
                 PilotaName = risultato.Pilota.Name,
                 TempoGiro = risultato.TempoGiro,
@@ -16,6 +17,16 @@ namespace FormulaABD.Mappers
                 PunteggioPosizione = risultato.PunteggioPosizione,
                 PunteggioDistacco = risultato.PunteggioDistacco,
                 TotalePunteggioGara = risultato.TotalePunteggioGara
+            };
+        }
+
+        public static UpdateRisultatoDto ToUpdateRisultatoDto(this Risultato risultato)
+        {
+            return new UpdateRisultatoDto
+            {
+                TracciatoId = risultato.TracciatoId,
+                PilotaId = risultato.PilotaId,
+                TempoGiro = risultato.TempoGiro
             };
         }
     }

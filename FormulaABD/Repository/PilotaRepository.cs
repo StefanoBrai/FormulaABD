@@ -1,4 +1,5 @@
 ﻿using FormulaABD.Data;
+using FormulaABD.DTOs.Pilota;
 using FormulaABD.Interfaces;
 using FormulaABD.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace FormulaABD.Repository
             return pilota;
         }
 
-        public async Task<List<Pilota>> GetAllAsync()
+        public async Task<IEnumerable<Pilota>> GetAllAsync()
         {
             return await _context.Piloti.ToListAsync();
         }
@@ -45,6 +46,22 @@ namespace FormulaABD.Repository
         public async Task<Pilota?> GetByGuidAsync(Guid guid)
         {
             return await _context.Piloti.FirstOrDefaultAsync(p => p.Id == guid);
+        }
+
+        public async Task<Pilota> UpdateAsync(Pilota pilota)
+        {
+            var existingPilota = await _context.Piloti.FirstOrDefaultAsync(x => x.Id == pilota.Id);
+
+            if (existingPilota == null)
+            {
+                return null;
+            }
+
+            existingPilota.Name = pilota.Name;
+
+            await _context.SaveChangesAsync();
+
+            return existingPilota;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FormulaABD.DTOs.Tracciato;
 using FormulaABD.Interfaces;
+using FormulaABD.Mappers;
 using FormulaABD.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ namespace FormulaABD.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TracciatoController : ControllerBase
+    public class TracciatoApiController : ControllerBase
     {
         private readonly ITracciatoRepository _tracciatoRepo;
 
-        public TracciatoController(ITracciatoRepository tracciatoRepo)
+        public TracciatoApiController(ITracciatoRepository tracciatoRepo)
         {
             _tracciatoRepo = tracciatoRepo;
         }
@@ -62,12 +63,39 @@ namespace FormulaABD.Controllers.API
         }
         #endregion
 
+        #region PUT : api/Tracciato/{guid}
+        [HttpPut]
+        [Route("{guid:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid guid, [FromBody] UpdateTracciatoDto updateTracciatoDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tracciatoUpdate = new Tracciato
+            {
+                Id = guid,
+                Name = updateTracciatoDto.Name
+            };
+
+            var tracciato = await _tracciatoRepo.UpdateAsync(tracciatoUpdate);
+
+            if (tracciato == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tracciato.ToTracciatoDto());
+        }
+        #endregion
+
         #region DELETE : api/Tracciato
         [HttpDelete]
         [Route("{guid:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid guid)
         {
-            var tracciato = await _tracciatoRepo.RemoveAsync(guid);
+            var tracciato = await _tracciatoRepo.DeleteAsync(guid);
 
             if (tracciato == null)
             {

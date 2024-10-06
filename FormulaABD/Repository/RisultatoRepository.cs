@@ -1,4 +1,5 @@
 ﻿using FormulaABD.Data;
+using FormulaABD.DTOs.Risultato;
 using FormulaABD.Helpers;
 using FormulaABD.Interfaces;
 using FormulaABD.Models;
@@ -10,16 +11,17 @@ namespace FormulaABD.Repository
     public class RisultatoRepository : IRisultatoRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RisultatoRepository(ApplicationDbContext context)
+        public RisultatoRepository(ApplicationDbContext context, IUnitOfWork unitOfWork = null)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Risultato> CreateAsync(Risultato risultato)
         {
             await _context.Risultati.AddAsync(risultato);
-            await _context.SaveChangesAsync();
 
             return risultato;
         }
@@ -39,7 +41,7 @@ namespace FormulaABD.Repository
             return risultato;
         }
 
-        public async Task<List<Risultato>> GetAllAsync(QueryObject query)
+        public async Task<IEnumerable<Risultato>> GetAllAsync(QueryObject query)
         {
             var risultati = _context.Risultati.Include(p => p.Pilota).Include(t => t.Tracciato).AsQueryable();
 
@@ -59,27 +61,43 @@ namespace FormulaABD.Repository
             return await _context.Risultati.Include(p => p.Pilota).Include(t => t.Tracciato).FirstOrDefaultAsync(r => r.Id == guid);
         }
 
-        public async Task<Risultato> UpdateAsync(Guid guid, Risultato risultato)
+        public async Task<Risultato> UpdateAsync(Guid guid, UpdateRisultatoDto risultatoDto)
         {
-            var existingRisultato = _context.Risultati.FirstOrDefault(r => r.Id == risultato.Id);
+            var existingRisultato = _context.Risultati.FirstOrDefault(r => r.Id == guid);
 
             if (existingRisultato == null)
             {
                 return null;
             }
 
-            existingRisultato.TracciatoId = risultato.TracciatoId;
-            existingRisultato.PilotaId = risultato.PilotaId;
-            existingRisultato.TempoGiro = risultato.TempoGiro;
+            existingRisultato.TracciatoId = risultatoDto.TracciatoId;
+            existingRisultato.PilotaId = risultatoDto.PilotaId;
+            existingRisultato.TempoGiro = risultatoDto.TempoGiro;
 
-            await _context.SaveChangesAsync();
+            // Calcolo Punteggi
+            var risultati = await GetAllByTracciatoGuid(existingRisultato.TracciatoId);
+
+            Funzioni.AggiornaPosizioniEPunteggi(risultati);
 
             return existingRisultato;
         }
 
         public async Task<List<Risultato>> GetAllByTracciatoGuid(Guid guidTracciato)
         {
-            return await _context.Risultati.Include(p => p.Pilota).Include(t => t.Tracciato).Where(r => r.TracciatoId == guidTracciato).ToListAsync();
+            return await _context.Risultati
+                .Include(p => p.Pilota)
+                .Include(t => t.Tracciato)
+                .Where(r => r.TracciatoId == guidTracciato)
+                .ToListAsync();
+        }
+
+        public async Task<List<Risultato>> GetAllByTracciatoPilota(Guid guidTracciato, Guid guidPilota)
+        {
+            return await _context.Risultati
+                .Include(p => p.Pilota)
+                .Include(t => t.Tracciato)
+                .Where(r => r.TracciatoId == guidTracciato && r.PilotaId == guidPilota)
+                .ToListAsync();
         }
     }
 }

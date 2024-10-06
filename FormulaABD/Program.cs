@@ -24,6 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IPilotaRepository, PilotaRepository>();
 builder.Services.AddScoped<ITracciatoRepository, TracciatoRepository>();
 builder.Services.AddScoped<IRisultatoRepository, RisultatoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 

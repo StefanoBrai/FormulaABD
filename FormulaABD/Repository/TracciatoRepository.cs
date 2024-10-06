@@ -1,4 +1,5 @@
 ﻿using FormulaABD.Data;
+using FormulaABD.DTOs.Tracciato;
 using FormulaABD.Interfaces;
 using FormulaABD.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace FormulaABD.Repository
             return tracciato;
         }
 
-        public async Task<List<Tracciato>> GetAllAsync()
+        public async Task<IEnumerable<Tracciato>> GetAllAsync()
         {
             return await _context.Tracciati.ToListAsync();
         }
@@ -32,7 +33,7 @@ namespace FormulaABD.Repository
             return await _context.Tracciati.FirstOrDefaultAsync(t => t.Id == guid);
         }
 
-        public async Task<Tracciato> RemoveAsync(Guid id)
+        public async Task<Tracciato> DeleteAsync(Guid id)
         {
             var tracciato = await _context.Tracciati.FirstOrDefaultAsync(t => t.Id == id);
 
@@ -45,6 +46,22 @@ namespace FormulaABD.Repository
             await _context.SaveChangesAsync();
 
             return tracciato;
+        }
+
+        public async Task<Tracciato> UpdateAsync(Tracciato tracciato)
+        {
+            var existingTracciato = await _context.Tracciati.FirstOrDefaultAsync(x => x.Id == tracciato.Id);
+
+            if (existingTracciato == null)
+            {
+                return null;
+            }
+
+            existingTracciato.Name = tracciato.Name;
+
+            await _context.SaveChangesAsync();
+
+            return existingTracciato;
         }
     }
 }

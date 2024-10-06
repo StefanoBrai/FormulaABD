@@ -1,0 +1,27 @@
+﻿@model Risultato
+
+@{
+    ViewData["Title"] = "Dettaglio Risultato";
+}
+
+<h1>Dettagli Risultato</h1>
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-2">Tracciato</dt>
+        <dd class="col-sm-10">@Model.Tracciato.Name</dd>
+
+        <dt class="col-sm-2">Pilota</dt>
+        <dd class="col-sm-10">@Model.Pilota.Name</dd>
+
+        <dt class="col-sm-2">Giro Migliore</dt>
+        <dd class="col-sm-10">@Model.TempoGiro</dd>
+
+        <dt class="col-sm-2">Punti Totali</dt>
+        <dd class="col-sm-10">@Model.TotalePunteggioGara</dd>
+    </dl>
+</div>
+
+<a asp-controller="Risultato" asp-action="Edit" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-secondary">Modifica</a>
+<a asp-controller="Risultato" asp-action="Delete" asp-route-id="@Model.Id" type="button" class="btn btn-sm btn-outline-secondary">Elimina</a>

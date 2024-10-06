@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FormulaABD.Models
 {
@@ -6,6 +7,8 @@ namespace FormulaABD.Models
     public class Pilota
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Display(Name = "Nome Pilota")]
         public string Name { get; set; } = "";
     }
 }

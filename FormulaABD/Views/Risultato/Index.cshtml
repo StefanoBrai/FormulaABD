@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Risultato>
+@using System.Collections.Generic;
+@using System.Linq;
+
+@{
+    ViewData["Title"] = "Risultati";
+}
+
+<!-- Intestazione -->
+<h1>Risultati</h1>
+
+<!-- Pulsante per la creazione di un nuovo risultato -->
+<a asp-controller="Risultato" asp-action="Create" type="button" class="btn btn-sm btn-success">Create</a>
+
+<!-- Sezione di ricerca -->
+<section class="mt-3">
+    <h2>Cerca Risultati</h2>
+    <form asp-action="Index" method="get" class="form-inline">
+        <div class="form-group mb-2">
+            <input type="text" name="nomeTracciato" class="form-control" placeholder="Cerca..." value="@Context.Request.Query["nomeTracciato"]" />
+        </div>
+        @* <button type="submit" class="btn btn-primary mb-2 ml-2">Cerca</button> *@
+    </form>
+</section>
+
+<!-- Tabella dei risultati -->
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().Id)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Tracciato.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Pilota.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.First().TempoGiro)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Tracciato.Name</td>
+                <td>@item.Pilota.Name</td>
+                <td>@item.TempoGiro</td>
+                <td>
+                    <a asp-controller="Risultato" asp-action="Details" asp-route-id="@item.Id" type="button" class="btn btn-sm btn-outline-secondary">Dettagli</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

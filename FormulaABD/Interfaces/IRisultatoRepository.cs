@@ -1,15 +1,17 @@
-﻿using FormulaABD.Helpers;
+﻿using FormulaABD.DTOs.Risultato;
+using FormulaABD.Helpers;
 using FormulaABD.Models;
 
 namespace FormulaABD.Interfaces
 {
     public interface IRisultatoRepository
     {
-        Task<List<Risultato>> GetAllAsync(QueryObject query);
+        Task<IEnumerable<Risultato>> GetAllAsync(QueryObject query);
         Task<Risultato> GetByGuidAsync(Guid guid);
         Task<List<Risultato>> GetAllByTracciatoGuid(Guid guidTracciato);
+        Task<List<Risultato>> GetAllByTracciatoPilota(Guid guidTracciato, Guid guidPilota);
         Task<Risultato> CreateAsync(Risultato risultato);
-        Task<Risultato> UpdateAsync(Guid guid, Risultato risultato);
+        Task<Risultato> UpdateAsync(Guid guid, UpdateRisultatoDto risultato);
         Task<Risultato> DeleteAsync(Guid guid);
     }
 }

@@ -1,0 +1,31 @@
+﻿@model Risultato
+
+@{
+    ViewData["Title"] = "Delete Risultato";
+}
+
+<h1>Sicuro di voler eliminare questo Risultato?</h1>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Id</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+
+        <dt class="col-sm-2">Tracciato</dt>
+        <dd class="col-sm-10">@Model.Tracciato.Name</dd>
+
+        <dt class="col-sm-2">Pilota</dt>
+        <dd class="col-sm-10">@Model.Pilota.Name</dd>
+
+        <dt class="col-sm-2">Giro Migliore</dt>
+        <dd class="col-sm-10">@Model.TempoGiro</dd>
+
+        <dt class="col-sm-2">Punti Totali</dt>
+        <dd class="col-sm-10">@Model.TotalePunteggioGara</dd>
+    </dl>
+</div>
+
+<form method="post" asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Confirm Delete" class="btn btn-danger float-right mt-3" />
+    <a asp-action="Index" class="btn btn-secondary float-left mt-3">Cancel</a>
+</form>
