@@ -50,7 +50,7 @@ namespace FormulaABD.Repository
             // Filtro
             if (!string.IsNullOrWhiteSpace(query.nomeTracciato))
             {
-                risultati = risultati.Where(r => r.Tracciato.Name.ToLower() == query.nomeTracciato.ToLower());
+                risultati = risultati.Where(r => r.Tracciato.Name.ToLower().Contains(query.nomeTracciato.ToLower()));
             }
 
             return await risultati.ToListAsync();

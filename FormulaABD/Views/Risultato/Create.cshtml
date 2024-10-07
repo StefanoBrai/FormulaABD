@@ -9,14 +9,18 @@
 <form method="post" asp-action="Create">
 
     <div class="form-group">
-        <label asp-for="PilotaId"></label>
-        <select asp-for="PilotaId" class="form-control" asp-items="Model.Piloti"></select>
+        <label asp-for="PilotaId">Pilota</label>
+        <select asp-for="PilotaId" class="form-control" asp-items="Model.Piloti">
+            <option value="">-- Seleziona un Pilota --</option>
+        </select>
         <span asp-validation-for="PilotaId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="TracciatoId"></label>
-        <select asp-for="TracciatoId" class="form-control" asp-items="Model.Tracciati"></select>
+        <label asp-for="TracciatoId">Tracciato</label>
+        <select asp-for="TracciatoId" class="form-control" asp-items="Model.Tracciati">
+            <option value="">-- Seleziona un Tracciato --</option>
+        </select>
         <span asp-validation-for="TracciatoId" class="text-danger"></span>
     </div>
 

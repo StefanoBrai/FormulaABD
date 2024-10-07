@@ -1,0 +1,36 @@
+﻿@using FormulaABD.ViewModels
+@model EditRisultatoVM
+
+@{
+    ViewData["Title"] = "Modifica Risultato";
+}
+
+<form method="post" asp-action="Edit" enctype="multipart/form-data">
+
+    <input type="hidden" value="Id" id="Id" />
+
+    <div class="form-group">
+        <label asp-for="TracciatoId"></label>
+        <select asp-for="TracciatoId" class="form-control" asp-items="Model.Tracciati">
+            <option value="">-- Seleziona un Tracciato --</option>
+        </select>
+        <span asp-validation-for="TracciatoId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PilotaId"></label>
+        <select asp-for="PilotaId" class="form-control" asp-items="Model.Piloti">
+            <option value="">-- Seleziona un Pilota --</option>
+        </select>
+        <span asp-validation-for="PilotaId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TempoGiro">Tempo Giro</label>
+        <input asp-for="TempoGiro" class="form-control" placeholder="Tempo Giro">
+        <span asp-validation-for="TempoGiro" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>

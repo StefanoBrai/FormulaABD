@@ -31,6 +31,9 @@
             <th>@Html.DisplayNameFor(model => model.First().Tracciato.Name)</th>
             <th>@Html.DisplayNameFor(model => model.First().Pilota.Name)</th>
             <th>@Html.DisplayNameFor(model => model.First().TempoGiro)</th>
+            <th>@Html.DisplayNameFor(model => model.First().PunteggioPosizione)</th>
+            <th>@Html.DisplayNameFor(model => model.First().PunteggioDistacco)</th>
+            <th>@Html.DisplayNameFor(Model => Model.First().TotalePunteggioGara)</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -42,6 +45,9 @@
                 <td>@item.Tracciato.Name</td>
                 <td>@item.Pilota.Name</td>
                 <td>@item.TempoGiro</td>
+                <td>@item.PunteggioPosizione</td>
+                <td>@item.PunteggioDistacco</td>
+                <td>@item.TotalePunteggioGara</td>
                 <td>
                     <a asp-controller="Risultato" asp-action="Details" asp-route-id="@item.Id" type="button" class="btn btn-sm btn-outline-secondary">Dettagli</a>
                 </td>

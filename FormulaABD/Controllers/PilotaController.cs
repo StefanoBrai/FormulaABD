@@ -68,11 +68,11 @@ namespace FormulaABD.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var pilota = await _repository.GetByGuidAsync(id);
+            var pilotaInDb = await _repository.GetByGuidAsync(id);
 
-            if (pilota == null) return View("Error");
+            if (pilotaInDb == null) return View("Error");
 
-            return View(pilota);
+            return View(pilotaInDb);
         }
 
         [HttpPost]
