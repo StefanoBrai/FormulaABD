@@ -4,7 +4,7 @@ namespace FormulaABD.Helpers
 {
     public static class Funzioni
     {
-        public static void AggiornaPosizioniEPunteggi(List<Risultato> risultati)
+        public static List<Risultato> AggiornaPosizioniEPunteggi(List<Risultato> risultati)
         {
             risultati = risultati.OrderBy(r => r.TempoGiro).ToList();
 
@@ -15,6 +15,8 @@ namespace FormulaABD.Helpers
                 risultati[i].PunteggioDistacco = 30 - CalcolaPunteggioDistacco(risultati[0].TempoGiro, risultati[i].TempoGiro);
                 risultati[i].TotalePunteggioGara = risultati[i].PunteggioPosizione + risultati[i].PunteggioDistacco;
             }
+
+            return risultati;
         }
 
         public static int CalcolaPunteggioPosizione(int posizione)
@@ -35,7 +37,9 @@ namespace FormulaABD.Helpers
             var attualeTempo = ParseCustomTimeSpan(tempoAttuale);
             var distacco = attualeTempo - primoTempo;
 
-            return distacco.Seconds;
+            int totSec = distacco.Seconds + (distacco.Minutes * 60);
+
+            return totSec;
         }
 
         public static TimeSpan ParseCustomTimeSpan(string timeString)

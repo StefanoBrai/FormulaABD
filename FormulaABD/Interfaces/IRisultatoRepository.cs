@@ -11,7 +11,7 @@ namespace FormulaABD.Interfaces
         Task<List<Risultato>> GetAllByTracciatoGuid(Guid guidTracciato);
         Task<List<Risultato>> GetAllByTracciatoPilota(Guid guidTracciato, Guid guidPilota);
         Task<Risultato> CreateAsync(Risultato risultato);
-        Task<Risultato> UpdateAsync(Guid guid, UpdateRisultatoDto risultato);
+        Task<Risultato> UpdateAsync(Risultato risultato);
         Task<Risultato> DeleteAsync(Guid guid);
     }
 }

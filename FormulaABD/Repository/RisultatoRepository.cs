@@ -61,25 +61,15 @@ namespace FormulaABD.Repository
             return await _context.Risultati.Include(p => p.Pilota).Include(t => t.Tracciato).FirstOrDefaultAsync(r => r.Id == guid);
         }
 
-        public async Task<Risultato> UpdateAsync(Guid guid, UpdateRisultatoDto risultatoDto)
+        public async Task<Risultato> UpdateAsync(Risultato editedRisultato)
         {
-            var existingRisultato = _context.Risultati.FirstOrDefault(r => r.Id == guid);
-
-            if (existingRisultato == null)
-            {
-                return null;
-            }
-
-            existingRisultato.TracciatoId = risultatoDto.TracciatoId;
-            existingRisultato.PilotaId = risultatoDto.PilotaId;
-            existingRisultato.TempoGiro = risultatoDto.TempoGiro;
+            _context.Update(editedRisultato);
 
             // Calcolo Punteggi
-            var risultati = await GetAllByTracciatoGuid(existingRisultato.TracciatoId);
-
+            var risultati = await GetAllByTracciatoGuid(editedRisultato.TracciatoId);
             Funzioni.AggiornaPosizioniEPunteggi(risultati);
 
-            return existingRisultato;
+            return editedRisultato;
         }
 
         public async Task<List<Risultato>> GetAllByTracciatoGuid(Guid guidTracciato)

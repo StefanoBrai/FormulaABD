@@ -14,12 +14,10 @@ namespace FormulaABD.Controllers.API
     [ApiController]
     public class RisultatoApiController : ControllerBase
     {
-        private readonly IRisultatoRepository _risultatoRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RisultatoApiController(IRisultatoRepository risultatoRepo, IUnitOfWork unitOfWork)
+        public RisultatoApiController(IUnitOfWork unitOfWork)
         {
-            _risultatoRepo = risultatoRepo;
             _unitOfWork = unitOfWork;
         }
 
@@ -137,7 +135,15 @@ namespace FormulaABD.Controllers.API
             {
                 await _unitOfWork.BeginTransictionAsync();
 
-                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(guid, updateRisultatoDto);
+                var editedRisultato = new Risultato
+                {
+                    Id = guid,
+                    PilotaId = updateRisultatoDto.PilotaId,
+                    TracciatoId = updateRisultatoDto.TracciatoId,
+                    TempoGiro = updateRisultatoDto.TempoGiro!
+                };
+
+                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(editedRisultato);
 
                 if (risultato == null)
                 {
@@ -171,29 +177,28 @@ namespace FormulaABD.Controllers.API
             {
                 await _unitOfWork.BeginTransictionAsync();
 
-                var nuovoRisultato = new Risultato
-                {
-                    TracciatoId = createRisultatoDto.TracciatoId,
-                    PilotaId = createRisultatoDto.PilotaId,
-                    TempoGiro = createRisultatoDto.TempoGiro
-                };
-
-                await _unitOfWork.RisultatoRepository.CreateAsync(nuovoRisultato);
+                var createdRisultato = await _unitOfWork.RisultatoRepository.CreateAsync(createRisultatoDto.ToRisultato());
                 await _unitOfWork.CompleteAsync();
 
-                // Calcolo Punteggi
-                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(nuovoRisultato.Id, nuovoRisultato.ToUpdateRisultatoDto());
-                
-                if (risultato == null)
+                if (createdRisultato == null)
                 {
                     await _unitOfWork.RollbackTransactionAsync();
-                    return NotFound();
+                    return NotFound(new { message = "Risultato non trovato." });
+                }
+
+                // Calcolo Punteggi
+                var risultati = Funzioni.AggiornaPosizioniEPunteggi(await _unitOfWork.RisultatoRepository.GetAllByTracciatoGuid(createdRisultato.TracciatoId));
+
+                if (risultati == null)
+                {
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return StatusCode(500, new { message = "Errore nel calcolo dei punteggi." });
                 }
 
                 await _unitOfWork.CompleteAsync();
                 await _unitOfWork.CommitTransactionAsync();
 
-                return CreatedAtAction(nameof(GetAll), new { id = nuovoRisultato.Id }, nuovoRisultato);
+                return CreatedAtAction(nameof(GetAll), new { id = createdRisultato.Id }, createdRisultato);
             }
             catch (Exception ex)
             {

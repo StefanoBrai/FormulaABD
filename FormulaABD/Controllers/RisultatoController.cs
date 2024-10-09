@@ -3,6 +3,7 @@ using FormulaABD.Helpers;
 using FormulaABD.Interfaces;
 using FormulaABD.Mappers;
 using FormulaABD.Models;
+using FormulaABD.Repository;
 using FormulaABD.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -96,29 +97,28 @@ namespace FormulaABD.Controllers
             {
                 await _unitOfWork.BeginTransictionAsync();
 
-                var nuovoRisultato = new Risultato
-                {
-                    TracciatoId = createRisultatoVM.TracciatoId,
-                    PilotaId = createRisultatoVM.PilotaId,
-                    TempoGiro = createRisultatoVM.TempoGiro
-                };
-
-                await _unitOfWork.RisultatoRepository.CreateAsync(nuovoRisultato);
+                var createdRisultato = await _unitOfWork.RisultatoRepository.CreateAsync(createRisultatoVM.ToRisultato());
                 await _unitOfWork.CompleteAsync();
 
-                // Calcolo Punteggi
-                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(nuovoRisultato.Id, nuovoRisultato.ToUpdateRisultatoDto());
-
-                if (risultato == null)
+                if (createdRisultato == null)
                 {
                     await _unitOfWork.RollbackTransactionAsync();
-                    return NotFound();
+                    return View("NotFound");
+                }
+
+                // Calcolo Punteggi
+                var risultati = Funzioni.AggiornaPosizioniEPunteggi(await _unitOfWork.RisultatoRepository.GetAllByTracciatoGuid(createdRisultato.TracciatoId));
+
+                if (risultati == null)
+                {
+                    await _unitOfWork.RollbackTransactionAsync();
+                    return View("Error");
                 }
 
                 await _unitOfWork.CompleteAsync();
                 await _unitOfWork.CommitTransactionAsync();
 
-                return RedirectToAction("index");
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
@@ -171,7 +171,7 @@ namespace FormulaABD.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Guid id, EditRisultatoVM editRisultatoVM)
+        public async Task<IActionResult> Edit(EditRisultatoVM editRisultatoVM)
         {
             if (!ModelState.IsValid)
             {
@@ -181,19 +181,18 @@ namespace FormulaABD.Controllers
 
             try
             {
-
                 await _unitOfWork.BeginTransictionAsync();
 
-                var risultatoInDb = await _unitOfWork.RisultatoRepository.GetByGuidAsync(id);
-
-                if (risultatoInDb == null) return View("Error");
-
-                risultatoInDb.TracciatoId = editRisultatoVM.TracciatoId;
-                risultatoInDb.PilotaId = editRisultatoVM.PilotaId;
-                risultatoInDb.TempoGiro = editRisultatoVM.TempoGiro;
+                var ris = new Risultato
+                {
+                    Id = editRisultatoVM.Id,
+                    PilotaId = editRisultatoVM.PilotaId,
+                    TracciatoId = editRisultatoVM.TracciatoId,
+                    TempoGiro = editRisultatoVM.TempoGiro!
+                };
 
                 // Calcolo Punteggi
-                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(risultatoInDb.Id, risultatoInDb.ToUpdateRisultatoDto());
+                var risultato = await _unitOfWork.RisultatoRepository.UpdateAsync(ris);
 
                 if (risultato == null)
                 {
